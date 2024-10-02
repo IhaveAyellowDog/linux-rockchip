@@ -4303,10 +4303,10 @@ static int dw_hdmi_detect_phy(struct dw_hdmi *hdmi)
 
 static void dw_hdmi_cec_enable(struct dw_hdmi *hdmi)
 {
-	mutex_lock(&hdmi->mutex);
+	//mutex_lock(&hdmi->mutex);
 	hdmi->mc_clkdis &= ~HDMI_MC_CLKDIS_CECCLK_DISABLE;
 	hdmi_writeb(hdmi, hdmi->mc_clkdis, HDMI_MC_CLKDIS);
-	mutex_unlock(&hdmi->mutex);
+	//mutex_unlock(&hdmi->mutex);
 }
 
 static void dw_hdmi_cec_disable(struct dw_hdmi *hdmi)
