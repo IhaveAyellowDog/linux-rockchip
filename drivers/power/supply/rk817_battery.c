@@ -440,7 +440,7 @@ struct adc_info {
 	uint32_t vol_ratio;
 	uint32_t ref_vol;
 	uint32_t vol_res;
-+};
+};
 
 struct battery_platform_data {
 
@@ -639,7 +639,7 @@ struct rk817_battery_device {
 	struct {
 			struct gpiod_desc *charging;
 			struct gpiod_desc *done;
-+	}status;
+	}status;
 };
 
 static void rk817_bat_resume_work(struct work_struct *work);
