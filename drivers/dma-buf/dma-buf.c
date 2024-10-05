@@ -595,7 +595,10 @@ static long dma_buf_ioctl(struct file *file,
 	case DMA_BUF_IOCTL_IMPORT_SYNC_FILE:
 		return dma_buf_import_sync_file(dmabuf, (const void __user *)arg);
 #endif
-
+	default:
+		return -ENOTTY;
+	}
+}
 
 static void dma_buf_show_fdinfo(struct seq_file *m, struct file *file)
 {
