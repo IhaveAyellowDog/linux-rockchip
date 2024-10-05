@@ -546,59 +546,6 @@ static long dma_buf_import_sync_file(struct dma_buf *dmabuf,
 }
 #endif
 
-int (*end_cpu_access_partial)(struct dma_buf *dmabuf,
-				  enum dma_data_direction,
-				  unsigned int offset, unsigned int len);
-
-
-
-int (*begin_cpu_access_partial)(struct dma_buf *dmabuf,
-				enum dma_data_direction,
-				unsigned int offset, unsigned int len);
-					
-
-int dma_buf_end_cpu_access_partial(struct dma_buf *dmabuf,
-				   enum dma_data_direction direction,
-				   unsigned int offset, unsigned int len)
-{
-	int ret = 0;
-
-	WARN_ON(!dmabuf);
-
-	if (dmabuf->ops->end_cpu_access_partial)
-		ret = dmabuf->ops->end_cpu_access_partial(dmabuf, direction,
-							  offset, len);
-
-	return ret;
-}
-EXPORT_SYMBOL_GPL(dma_buf_end_cpu_access_partial);
-
-
-int dma_buf_begin_cpu_access_partial(struct dma_buf *dmabuf,
-				     enum dma_data_direction direction,
-				     unsigned int offset, unsigned int len)
-{
-	int ret = 0;
-
-	if (WARN_ON(!dmabuf))
-		return -EINVAL;
-
-	if (dmabuf->ops->begin_cpu_access_partial)
-		ret = dmabuf->ops->begin_cpu_access_partial(dmabuf, direction,
-							    offset, len);
-
-	/* Ensure that all fences are waited upon - but we first allow
-	 * the native handler the chance to do so more efficiently if it
-	 * chooses. A double invocation here will be reasonably cheap no-op.
-	 */
-	if (ret == 0)
-		ret = __dma_buf_begin_cpu_access(dmabuf, direction);
-
-	return ret;
-}
-EXPORT_SYMBOL_GPL(dma_buf_begin_cpu_access_partial);
-
-
 static long dma_buf_ioctl(struct file *file,
 			  unsigned int cmd, unsigned long arg)
 {
