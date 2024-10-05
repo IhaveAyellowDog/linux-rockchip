@@ -596,53 +596,6 @@ static long dma_buf_ioctl(struct file *file,
 		return dma_buf_import_sync_file(dmabuf, (const void __user *)arg);
 #endif
 
-#ifdef CONFIG_DMABUF_PARTIAL
-	case DMA_BUF_IOCTL_SYNC_PARTIAL: {
-		struct dma_buf_sync_partial sync_p;
-
-		if (copy_from_user(&sync_p, (void __user *) arg, sizeof(sync_p)))
-			return -EFAULT;
-
-		if (sync_p.len == 0)
-			return 0;
-
-		if (sync_p.len > dmabuf->size || sync_p.offset > dmabuf->size - sync_p.len)
-			return -EINVAL;
-
-		if (sync_p.flags & ~DMA_BUF_SYNC_VALID_FLAGS_MASK)
-			return -EINVAL;
-
-		switch (sync_p.flags & DMA_BUF_SYNC_RW) {
-		case DMA_BUF_SYNC_READ:
-			direction = DMA_FROM_DEVICE;
-			break;
-		case DMA_BUF_SYNC_WRITE:
-			direction = DMA_TO_DEVICE;
-			break;
-		case DMA_BUF_SYNC_RW:
-			direction = DMA_BIDIRECTIONAL;
-			break;
-		default:
-			return -EINVAL;
-		}
-
-		if (sync_p.flags & DMA_BUF_SYNC_END)
-			ret = dma_buf_end_cpu_access_partial(dmabuf, direction,
-							     sync_p.offset,
-							     sync_p.len);
-		else
-			ret = dma_buf_begin_cpu_access_partial(dmabuf, direction,
-							       sync_p.offset,
-							       sync_p.len);
-
-		return ret;
-	}
-#endif /* CONFIG_DMABUF_PARTIAL */
-
-	default:
-		return -ENOTTY;
-	}
-}
 
 static void dma_buf_show_fdinfo(struct seq_file *m, struct file *file)
 {
